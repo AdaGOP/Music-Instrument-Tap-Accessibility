@@ -33,126 +33,147 @@
 import UIKit
 
 class ViewController: UIViewController {
+    @IBOutlet weak var textFieldTrompet: UITextField!
+    @IBOutlet weak var textFieldGitar: UITextField!
     
-    @IBOutlet weak var textField1: UITextField!
-    @IBOutlet weak var textField2: UITextField!
+    @IBOutlet weak var textFieldDrum: UITextField!
+    @IBOutlet weak var textFieldPiano: UITextField!
     
-    @IBOutlet weak var textField3: UITextField!
-    @IBOutlet weak var textField4: UITextField!
-    
-    
-    
-    @IBOutlet weak var button1: UIButton!
-    @IBOutlet weak var button2: UIButton!
-    @IBOutlet weak var button3: UIButton!
-    @IBOutlet weak var button4: UIButton!
+    @IBOutlet weak var buttonTrompet: UIButton!
+    @IBOutlet weak var buttonGitar: UIButton!
+    @IBOutlet weak var buttonDrum: UIButton!
+    @IBOutlet weak var buttonPiano: UIButton!
     @IBOutlet weak var labelInstrument: UILabel!
-    @IBOutlet weak var labelTimesTap: UILabel!
+    @IBOutlet weak var labelTapCount: UILabel!
     
-    @IBOutlet weak var labelTrompetTimesTap: UILabel!
+    @IBOutlet weak var labelTrompetTapCount: UILabel!
     
-    @IBOutlet weak var labelGitarTimesTap: UILabel!
+    @IBOutlet weak var labelGitarTapCount: UILabel!
     
-    @IBOutlet weak var labelDrumTimesTap: UILabel!
+    @IBOutlet weak var labelDrumTapCount: UILabel!
     
-    @IBOutlet weak var labelPianoTimesTap: UILabel!
+    @IBOutlet weak var labelPianoTapCount: UILabel!
     
-    var timesTap = 0
-    var trompetTimesTap = 0
-    var gitarTimesTap = 0
-    var drumTimesTap = 0
-    var pianoTimesTap = 0
+    var timesTap: Int = 0
+    var trompetTapCount: Int = 0
+    var gitarTapCount: Int = 0
+    var drumTapCount: Int = 0
+    var pianoTapCount: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        resetAllValue()
+        reset()
     }
     
     @IBAction func tapButton(_ sender: UIButton) {
-        let info: String = "You just tapped "
+        let preMessage: String = "You just tapped"
+        let unknownMessage: String = "Please, give it a name!"
+        
+        var textForlabel: String = ""
+        
         switch sender {
-        case button1:
-            labelInstrument.text = "\(info) \(textField1.text ?? "trompet")"
-        case button2:
-            labelInstrument.text = "\(info) \(textField2.text ?? "gitar")"
-        case button3:
-            labelInstrument.text = "\(info) \(textField3.text ?? "drum")"
-        case button4:
-            labelInstrument.text = "\(info) \(textField4.text ?? "piano")"
-        default:
-            labelInstrument.text = "\(info) unknown"
+        case buttonTrompet:
+            //optional is used because of the `text` property of the TextField is optional while the value of the `text` property is @"" by default.
+            if let textInTrompetField = textFieldTrompet.text {
+                textForlabel = "\(preMessage) \(textInTrompetField)"
+            }
+        case buttonGitar:
+            if let textInGitarField = textFieldGitar.text {
+                textForlabel = textInGitarField == "" ? unknownMessage : "\(preMessage) \(textInGitarField)"
+            }
+        case buttonDrum:
+            if let textInDrumField = textFieldDrum.text {
+                textForlabel = textInDrumField == "" ? unknownMessage : "\(preMessage) \(textInDrumField)"
+            }
+        case buttonPiano:
+            if let textInPianoField = textFieldPiano.text {
+                textForlabel = textInPianoField == "" ? unknownMessage : "\(preMessage) \(textInPianoField)"
+            }
+        default://never happen but a switch has to have default
+            labelInstrument.text = "\(preMessage) unknown"
         }
         
-        increaseTimesTap()
-        increaseTimesTap(buttonTapped: sender)
+        labelInstrument.text = textForlabel
+        
+        increaseTapCount()
+        increaseInstrumentTapCount(forButton: sender)
     }
     
-    func resetAllValue(){
+    @IBAction func tappedReset(_ sender: UIButton) {
+        reset()
+    }
+    
+    
+    func reset(){
         //reset all times tap to 0
         timesTap = 0
-        trompetTimesTap = 0
-        gitarTimesTap = 0
-        drumTimesTap = 0
-        pianoTimesTap = 0
+        trompetTapCount = 0
+        gitarTapCount = 0
+        drumTapCount = 0
+        pianoTapCount = 0
         
         //reset instrumentname label
         labelInstrument.text = "Tap one of them!"
         
-        labelTimesTap.text = "0 tap"
-        labelTrompetTimesTap.text = "0 tap"
-        labelGitarTimesTap.text = "0 tap"
-        labelDrumTimesTap.text = "0 tap"
-        labelPianoTimesTap.text = "0 tap"
+        labelTapCount.text = "0 tap"
+        labelTrompetTapCount.text = "0 tap"
+        labelGitarTapCount.text = "0 tap"
+        labelDrumTapCount.text = "0 tap"
+        labelPianoTapCount.text = "0 tap"
     }
     
-    func smartUnitText(forValue: Int) -> String{
-        if timesTap > 1 {
+    func smartUnitTextDisplay(forValue: Int) -> String{
+        if forValue > 1 {
             return "taps"
         } else {
             return "tap"
         }
+        
+        //example using ternary
+//        var unit = timesTap > 1 ? "taps" : "tap"
+//        return unit
     }
     
-    func increaseTimesTap(){
+    func increaseTapCount(){
         //menambah 1 pada times tap
         timesTap = timesTap + 1
         
         //mengupdate text times tap
-        let unit = smartUnitText(forValue: timesTap)
+        let unit = smartUnitTextDisplay(forValue: timesTap)
         
         //meng-update label
-        labelTimesTap.text = "\(timesTap) \(unit)"
+        labelTapCount.text = "\(timesTap) \(unit)"
     }
     
-    func increaseTimesTap(buttonTapped: UIButton){
-        var label: UILabel? = nil
+    func increaseInstrumentTapCount(forButton: UIButton){
+        var hereIsTheLabel: UILabel?
         
         //menambah 1 pada times tap
         var value = 0
-        if buttonTapped == button1 {
-            trompetTimesTap = trompetTimesTap + 1
-            value = trompetTimesTap
-            label = labelTrompetTimesTap
-        } else if buttonTapped == button2 {
-            gitarTimesTap = gitarTimesTap + 1
-            value = gitarTimesTap
-            label = labelGitarTimesTap
-        } else if buttonTapped == button3 {
-            drumTimesTap = drumTimesTap + 1
-            value = drumTimesTap
-            label = labelDrumTimesTap
-        } else if buttonTapped == button4 {
-            pianoTimesTap = pianoTimesTap + 1
-            value = pianoTimesTap
-            label = labelPianoTimesTap
+        if forButton == buttonTrompet {
+            trompetTapCount = trompetTapCount + 1
+            value = trompetTapCount
+            hereIsTheLabel = labelTrompetTapCount
+        } else if forButton == buttonGitar {
+            gitarTapCount = gitarTapCount + 1
+            value = gitarTapCount
+            hereIsTheLabel = labelGitarTapCount
+        } else if forButton == buttonDrum {
+            drumTapCount = drumTapCount + 1
+            value = drumTapCount
+            hereIsTheLabel = labelDrumTapCount
+        } else if forButton == buttonPiano {
+            pianoTapCount = pianoTapCount + 1
+            value = pianoTapCount
+            hereIsTheLabel = labelPianoTapCount
         }
         
         //mengupdate text times tap
-        let unit = smartUnitText(forValue: value)
+        let unit = smartUnitTextDisplay(forValue: value)
         
         //meng-update label
-        if let affectedLabel = label {
+        if let affectedLabel = hereIsTheLabel {
             affectedLabel.text = "\(value) \(unit)"
         }
     }
